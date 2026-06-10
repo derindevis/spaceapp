@@ -19,9 +19,19 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 def create_app() -> FastAPI:
     app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
+    # Build allowed origins list: primary origin + any extras + localhost dev
+    allowed_origins: list[str] = [settings.frontend_origin, "http://localhost:5173"]
+    if settings.frontend_origins:
+        for o in settings.frontend_origins.split(","):
+            o = o.strip()
+            if o:
+                allowed_origins.append(o)
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[settings.frontend_origin],
+        allow_origins=allowed_origins,
+        # Also allow any Vercel preview/branch deployment automatically
+        allow_origin_regex=r"https://spaceapp.*\.vercel\.app",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

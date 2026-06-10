@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-3.5-flash"
     gemini_fallback_models: str = ""
     frontend_origin: str = "http://localhost:5173"
+    # Comma-separated extra origins (e.g. Vercel preview URLs)
+    frontend_origins: str = ""
 
     model_config = SettingsConfigDict(env_file=env_path, env_file_encoding="utf-8")
 
